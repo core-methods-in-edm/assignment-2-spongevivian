@@ -1,0 +1,103 @@
+---
+title: "Assignment2"
+author: "Yanfei Zhou"
+date: "2017/10/17"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+
+Part one:
+```{r}
+D1<-read.csv("~/Desktop/assignment-2-spongevivian-master/discipline-data.csv",head = TRUE)
+```
+
+```{r}
+D1$stid <- as.factor(D1$stid)
+```
+
+```{r}
+library(dplyr)
+D2 <- dplyr::select(D1, tid, stid)
+```
+
+```{r}
+EDGE <- dplyr::count(D2, tid, stid)
+names(EDGE) <- c("from", "to", "count")
+```
+
+```{r}
+V.TCH <- dplyr::select(D1, tid, t.gender, t.expertise)
+```
+
+```{r}
+V.TCH <- unique(V.TCH)
+```
+
+```{r}
+V.TCH$group <- "teacher"
+```
+
+```{r}
+V.STD <- dplyr::select(D1, stid, s.gender, s.major)
+V.STD <- unique(V.STD)
+```
+
+```{r}
+V.STD$group <- "student"
+```
+
+```{r}
+names(V.TCH) <- c("id", "gender", "topic", "group")
+names(V.STD) <- c("id", "gender", "topic", "group")
+```
+
+```{r}
+VERTEX <- dplyr::bind_rows(V.TCH, V.STD)
+```
+
+```{r}
+library(igraph)
+```
+
+```{r}
+g <- graph.data.frame(EDGE, directed=TRUE, vertices=VERTEX)
+```
+
+```{r}
+plot(g,layout=layout.fruchterman.reingold)
+```
+
+```{r}
+plot(g,layout=layout.fruchterman.reingold, vertex.color=VERTEX$gender)
+```
+
+```{r}
+plot(g,layout=layout.fruchterman.reingold, vertex.color=VERTEX$gender, edge.width=EDGE$count)
+```
+
+Part II:
+
